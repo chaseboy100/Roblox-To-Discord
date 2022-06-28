@@ -6,5 +6,6 @@
     "ServerID" : "YOUR_SERVER_ID",
     "ChannelID" : "YOUR_CHANNEL_ID",
     "GroupLink" : "LINK_TO_UR_GROUP",
-    "RoleID" : "YOUR_ROLE_ID"
+    "RoleID" : "YOUR_ROLE_ID",
+    "VcID" : "YOUR_VC_ID"
 }
