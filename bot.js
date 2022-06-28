@@ -5,6 +5,7 @@ const fs = require('fs')
 var config = require('./config.json')
 bot.commands = new Discord.Collection()
 const fetch = require("node-fetch");
+const {message} = require("noblox.js");
 
 const commandfiles = fs.readdirSync('./Commands/').filter(file => file.endsWith('.js'));
 
@@ -66,7 +67,7 @@ bot.on('ready', () => {
 
 
 
-bot.on ('ready', async() => { 
+bot.on ('ready', async() => {
     bot.user.setActivity("Enjoy!", {type : "WATCHING"})
     await rbxbot.setCookie(config.Cookie)
     .then(async(success) => { // Required if the group's shout is private
@@ -75,6 +76,7 @@ bot.on ('ready', async() => {
         let onShout = rbxbot.onShout(config.GroupID);
  
         onShout.on('data', async function(post) {
+            console.log("New Shout")
  
     function GetAvatarURL(user)
     {
@@ -88,16 +90,42 @@ bot.on ('ready', async() => {
             .catch(reject);
         });
     }
-    
-    let avatarurl = await (GetAvatarURL(post.poster.userId))
-    const shoutchannel = await bot.guilds.cache.get(config.ServerID).channels.cache.get(config.ChannelID)
-    const embed = new Discord.MessageEmbed()
-    .setTitle('New Group Shout!')
-    .setURL(config.GroupLink)
-    .setDescription(post.body)
-    .setAuthor(post.poster.username, avatarurl)
-    shoutchannel.send(embed)
-    console.log(`${post.poster.username} posted ${post.body}`)
+
+    const pw = post.body.toLowerCase()
+
+
+
+    if (pw.includes("training") && pw.includes("over") == false && pw.includes("conclude") == false && pw.includes("end") == false) {
+        console.log("Training!")
+        let avatarurl = await (GetAvatarURL(post.poster.userId))
+        const shoutchannel = await bot.guilds.cache.get(config.ServerID).channels.cache.get(config.ChannelID)
+        const vc = await bot.guilds.cache.get(config.ServerID).channels.cache.get(config.VcID)
+        const embed = new Discord.MessageEmbed()
+            .setTitle('A Training is Being Hosted!')
+            .setURL("https://www.roblox.com/games/8232411/Innovation-Security-Training-Facility")
+            .addField('Host:', post.poster.username, true)
+            .setThumbnail(avatarurl)
+        shoutchannel.send("@everyone")
+        shoutchannel.send(embed)
+        vc.setName("Training In Progress #trainings")
+
+        console.log(`${post.poster.username} posted ${post.body}`)
+    }
+
+            if (pw.includes("over") || pw.includes("conclude") || pw.includes("end")) {
+                console.log("Training Over!")
+                let avatarurl = await (GetAvatarURL(post.poster.userId))
+                const shoutchannel = await bot.guilds.cache.get(config.ServerID).channels.cache.get(config.ChannelID)
+                const vc = await bot.guilds.cache.get(config.ServerID).channels.cache.get(config.VcID)
+                const embed = new Discord.MessageEmbed()
+                    .setTitle('Training is Now Over!')
+                    .addField('Host:', post.poster.username, true)
+                    .setThumbnail(avatarurl)
+                await vc.setName("Training Not In Progress")
+                shoutchannel.send(embed)
+
+                console.log(`${post.poster.username} posted ${post.body}`)
+            }
 });
  
 onShout.on('error', function (err) {
